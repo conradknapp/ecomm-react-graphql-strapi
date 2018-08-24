@@ -1,0 +1,20 @@
+{
+  "defaultConnection": "default",
+  "connections": {
+    "default": {
+      "connector": "strapi-hook-mongoose",
+      "settings": {
+        "client": "mongo",
+        "host": "ds231242.mlab.com",
+        "port": "31242",
+        "database": "react-graphql-strapi",
+        "username": "Reed",
+        "password": "V_'P8nVU"
+      },
+      "options": {
+        "authenticationDatabase": "react-graphql-strapi",
+        "ssl": false
+      }
+    }
+  }
+}
