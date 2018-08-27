@@ -7,6 +7,7 @@ import {
   Redirect
 } from "react-router-dom";
 import "./index.css";
+import 'gestalt/dist/gestalt.css';
 import App from "./components/App";
 import Cart from "./components/Cart";
 import Checkout from "./components/Checkout";

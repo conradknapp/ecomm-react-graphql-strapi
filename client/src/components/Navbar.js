@@ -1,5 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import { Box, Text } from "gestalt";
 
 import { getToken } from "../utils";
 
@@ -10,33 +11,56 @@ class Navbar extends React.Component {
 }
 
 const AuthNav = () => (
-  <nav
-    style={{
-      padding: "1em .5em",
-      display: "flex",
-      justifyContent: "space-around",
-      background: "lightblue"
-    }}
+  <Box
+    height={60}
+    color="midnight"
+    padding={1}
+    alignItems="center"
+    shape="roundedBottom"
+    justifyContent="around"
+    direction="row"
+    display="flex"
   >
-    <NavLink to="/">Home</NavLink>
-    <NavLink to="/cart">Cart</NavLink>
-    {/* <NavLink to="/signout">Sign out</NavLink> */}
-  </nav>
+    <NavLink to="/">
+      <Text size="xl" color="white">
+        Home
+      </Text>
+    </NavLink>
+    <NavLink to="/checkout">
+      <Text size="xl" color="white">
+        Cart
+      </Text>
+    </NavLink>
+  </Box>
 );
 
 const UnAuthNav = () => (
-  <nav
-    style={{
-      padding: "1em .5em",
-      display: "flex",
-      justifyContent: "space-around",
-      background: "lightgrey"
-    }}
+  <Box
+    height={60}
+    color="midnight"
+    padding={1}
+    alignItems="center"
+    shape="roundedBottom"
+    justifyContent="around"
+    direction="row"
+    display="flex"
   >
-    <NavLink to="/">Home</NavLink>
-    <NavLink to="/signin">Sign in</NavLink>
-    <NavLink to="/signup">Sign up</NavLink>
-  </nav>
+    <NavLink to="/">
+      <Text size="xl" color="white">
+        Home
+      </Text>
+    </NavLink>
+    <NavLink to="/signin">
+      <Text size="xl" color="white">
+        Sign in
+      </Text>
+    </NavLink>
+    <NavLink to="/signup">
+      <Text size="xl" color="white">
+        Sign up
+      </Text>
+    </NavLink>
+  </Box>
 );
 
 export default Navbar;

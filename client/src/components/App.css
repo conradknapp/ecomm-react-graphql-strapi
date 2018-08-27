@@ -1,37 +1,15 @@
-* {
-  box-sizing: border-box;
+a,
+a:link,
+a:visited {
+  text-decoration: none;
 }
 
 body,
 html {
   background-color: #f6f9fc;
-  font-size: 18px;
-  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
 }
 
-h1 {
-  color: #32325d;
-  font-weight: 400;
-  line-height: 50px;
-  font-size: 40px;
-  margin: 20px 0;
-  padding: 0;
-}
-
-.Checkout {
-  margin: 0 auto;
-  max-width: 800px;
-  box-sizing: border-box;
-  padding: 0 5px;
-}
-
-label {
-  color: #6b7c93;
-  font-weight: 300;
-  letter-spacing: 0.025em;
-}
-
-button {
+#stripe__button {
   white-space: nowrap;
   border: 0;
   outline: 0;
@@ -53,13 +31,7 @@ button {
   margin-top: 10px;
 }
 
-form {
-  margin-bottom: 40px;
-  padding-bottom: 40px;
-  border-bottom: 3px solid #e6ebf1;
-}
-
-button:hover {
+#stripe__button:hover {
   color: #fff;
   cursor: pointer;
   background-color: #7795f8;
@@ -67,7 +39,6 @@ button:hover {
   box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
 }
 
-input,
 .StripeElement {
   display: block;
   margin: 10px 0 20px 0;
@@ -83,11 +54,11 @@ input,
   background: white;
 }
 
-input::placeholder {
+#stripe__input::placeholder {
   color: #aab7c4;
 }
 
-input:focus,
+#stripe__input:focus,
 .StripeElement--focus {
   box-shadow: rgba(50, 50, 93, 0.109804) 0px 4px 6px,
     rgba(0, 0, 0, 0.0784314) 0px 1px 3px;

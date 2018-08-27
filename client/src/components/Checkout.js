@@ -7,6 +7,7 @@ import {
 } from "react-stripe-elements";
 import { loadCart, displayPrice } from "../utils";
 import Strapi from "strapi-sdk-javascript/build/main";
+import { Heading, Box, TextField, Text } from "gestalt";
 const apiUrl = process.env.API_URL || "http://localhost:1337";
 const strapi = new Strapi(apiUrl);
 
@@ -23,8 +24,9 @@ class _CheckoutForm extends React.Component {
     this.setState({ cartItems: loadCart() });
   }
 
-  handleChange = ({ target }) => {
-    this.setState({ [target.name]: target.value });
+  handleChange = ({ event, value }) => {
+    event.persist();
+    this.setState({ [event.target.name]: value });
   };
 
   handleSubmit = async event => {
@@ -62,35 +64,45 @@ class _CheckoutForm extends React.Component {
     const { loading, cartItems } = this.state;
 
     return (
-      <form onSubmit={this.handleSubmit}>
-        <h1>Checkout</h1>
-        <p>Total: ${displayPrice(cartItems)}</p>
-        <input
-          type="text"
-          name="address"
-          placeholder="Address"
-          onChange={this.handleChange}
-        />
-        <input
-          type="text"
-          name="postalCode"
-          placeholder="Postal Code"
-          onChange={this.handleChange}
-        />
-        <input
-          type="text"
-          name="city"
-          placeholder="Enter your city"
-          onChange={this.handleChange}
-        />
-        <label>
-          Card details
-          <CardElement onReady={el => el.focus()} />
-        </label>
-        <button type="submit" disabled={loading}>
-          Submit
-        </button>
-      </form>
+      <Box display="flex" justifyContent="center">
+        <form
+          style={{
+            display: "inlineBlock",
+            textAlign: "center"
+          }}
+          onSubmit={this.handleSubmit}
+        >
+          <Box>
+            <Heading>Checkout</Heading>
+            <Text>Total: ${displayPrice(cartItems)}</Text>
+            <TextField
+              id="address"
+              type="text"
+              name="address"
+              placeholder="Address"
+              onChange={this.handleChange}
+            />
+            <TextField
+              id="postalCode"
+              type="number"
+              name="postalCode"
+              placeholder="Postal Code"
+              onChange={this.handleChange}
+            />
+            <TextField
+              id="city"
+              type="text"
+              name="city"
+              placeholder="Enter your city"
+              onChange={this.handleChange}
+            />
+            <CardElement id="stripe__input" onReady={el => el.focus()} />
+            <button id="stripe__button" type="submit" disabled={loading}>
+              Submit
+            </button>
+          </Box>
+        </form>
+      </Box>
     );
   }
 }

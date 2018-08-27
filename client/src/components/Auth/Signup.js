@@ -1,5 +1,6 @@
 import React from "react";
 import Strapi from "strapi-sdk-javascript/build/main";
+import { Button, Heading, TextField } from "gestalt";
 const apiUrl = process.env.API_URL || "http://localhost:1337";
 const strapi = new Strapi(apiUrl);
 
@@ -11,8 +12,9 @@ class Signup extends React.Component {
     loading: false
   };
 
-  handleChange = ({ target }) => {
-    this.setState({ [target.name]: target.value });
+  handleChange = ({ event, value }) => {
+    event.persist();
+    this.setState({ [event.target.name]: value });
   };
 
   handleSubmit = async event => {
@@ -46,28 +48,26 @@ class Signup extends React.Component {
           }}
           onSubmit={this.handleSubmit}
         >
-          <h1>Signup</h1>
-          <input
+          <Heading>Signup</Heading>
+          <TextField
             type="text"
             name="username"
             placeholder="username"
             onChange={this.handleChange}
           />
-          <input
+          <TextField
             type="email"
             name="email"
             placeholder="Email"
             onChange={this.handleChange}
           />
-          <input
+          <TextField
             type="password"
             name="password"
             placeholder="Password"
             onChange={this.handleChange}
           />
-          <button type="submit" disabled={loading}>
-            Submit
-          </button>
+          <Button inline text="Submit" type="submit" disabled={loading} />
         </form>
       </React.Fragment>
     );
