@@ -23,7 +23,7 @@ const AuthNav = () => (
   >
     <NavLink exact activeClassName="active" to="/">
       <Text size="xl" color="white">
-        Home
+        The Eatery
       </Text>
     </NavLink>
     <NavLink activeClassName="active" to="/checkout">
@@ -47,7 +47,7 @@ const UnAuthNav = () => (
   >
     <NavLink exact activeClassName="active" to="/">
       <Text size="xl" color="white">
-        Home
+        The Eatery
       </Text>
     </NavLink>
     <NavLink activeClassName="active" to="/signin">

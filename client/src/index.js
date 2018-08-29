@@ -6,10 +6,8 @@ import {
   Route,
   Redirect
 } from "react-router-dom";
-import "./index.css";
 import "gestalt/dist/gestalt.css";
 import App from "./components/App";
-import Cart from "./components/Cart";
 import Checkout from "./components/Checkout";
 import Dishes from "./components/Dishes";
 import Signin from "./components/Auth/Signin";
@@ -36,25 +34,20 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
   />
 );
 
-class Root extends React.Component {
-  render() {
-    return (
-      <Router>
-        <React.Fragment>
-          <Navbar />
-          <Switch>
-            <Route exact path="/" component={App} />
-            <Route path="/signin" component={Signin} />
-            <Route path="/signup" component={Signup} />
-            <PrivateRoute path="/checkout" component={Checkout} />
-            <PrivateRoute path="/cart" component={Cart} />
-            <Route path="/:id" component={Dishes} />
-          </Switch>
-        </React.Fragment>
-      </Router>
-    );
-  }
-}
+const Root = () => (
+  <Router>
+    <React.Fragment>
+      <Navbar />
+      <Switch>
+        <Route exact path="/" component={App} />
+        <Route path="/signin" component={Signin} />
+        <Route path="/signup" component={Signup} />
+        <PrivateRoute path="/checkout" component={Checkout} />
+        <Route path="/:id" component={Dishes} />
+      </Switch>
+    </React.Fragment>
+  </Router>
+);
 
 if (module.hot) {
   module.hot.accept();

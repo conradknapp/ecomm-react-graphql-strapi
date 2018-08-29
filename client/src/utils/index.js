@@ -1,9 +1,9 @@
 const USER_INFO = "userInfo";
 const TOKEN_KEY = "jwtToken";
 
-export const getToken = () => {
+export const getToken = (key = TOKEN_KEY) => {
   if (localStorage) {
-    return JSON.parse(localStorage.getItem("jwt"));
+    return JSON.parse(localStorage.getItem(key));
   } else {
     return null;
   }

@@ -1,34 +1,38 @@
 import React from "react";
-import { loadCart, displayPrice } from "../utils";
+import { displayPrice } from "../utils";
 
-class Cart extends React.Component {
-  state = {
-    cartItems: []
-  };
-
-  componentDidMount() {
-    this.setState({ cartItems: loadCart() });
-  }
-
-  render() {
-    const { cartItems } = this.state;
-
-    return (
-      <div>
-        <h1>Cart</h1>
-        <ul>
-          {cartItems.map((el, i) => (
-            <li key={i}>
-              <p>
-                {el.name} - <span>{el.quantity}</span>
-              </p>
-            </li>
-          ))}
-        </ul>
-        <p>Total {displayPrice(cartItems)}</p>
-      </div>
-    );
-  }
-}
+const Cart = ({ cartItems }) => (
+  <Mask shape="rounded" wash>
+    <Box display="flex" direction="column" alignItems="center" padding={3}>
+      <Heading align="center" size="sm">
+        Your Cart
+      </Heading>
+      <Text color="gray" italic>
+        {cartItems.length} items selected
+      </Text>
+      <ul>
+        {cartItems.map((item, i) => (
+          <li key={i}>
+            <Text>
+              {item.name} x {item.quantity} - ${item.quantity * item.price}
+            </Text>
+          </li>
+        ))}
+      </ul>
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        direction="column"
+      >
+        <Text size="lg">Total: {displayPrice(cartItems)}</Text>
+        {cartItems.length === 0 && <Text>Please select some items</Text>}
+        <Text>
+          <Link to="/checkout">Checkout</Link>
+        </Text>
+      </Box>
+    </Box>
+  </Mask>
+);
 
 export default Cart;

@@ -1,6 +1,6 @@
 import React from "react";
 import Strapi from "strapi-sdk-javascript/build/main";
-import { Button, Heading, TextField } from "gestalt";
+import { Container, Box, Button, Heading, TextField } from "gestalt";
 const apiUrl = process.env.API_URL || "http://localhost:1337";
 const strapi = new Strapi(apiUrl);
 
@@ -37,39 +37,38 @@ class Signup extends React.Component {
     const { loading } = this.state;
 
     return (
-      <React.Fragment>
-        <form
-          style={{
-            display: "flex",
-            marginTop: "5em",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center"
-          }}
-          onSubmit={this.handleSubmit}
-        >
-          <Heading>Signup</Heading>
-          <TextField
-            type="text"
-            name="username"
-            placeholder="username"
-            onChange={this.handleChange}
-          />
-          <TextField
-            type="email"
-            name="email"
-            placeholder="Email"
-            onChange={this.handleChange}
-          />
-          <TextField
-            type="password"
-            name="password"
-            placeholder="Password"
-            onChange={this.handleChange}
-          />
-          <Button inline text="Submit" type="submit" disabled={loading} />
-        </form>
-      </React.Fragment>
+      <Container>
+        <Box>
+          <form
+            style={{
+              display: "inlineBlock",
+              textAlign: "center"
+            }}
+            onSubmit={this.handleSubmit}
+          >
+            <Heading color="orange">Signup</Heading>
+            <TextField
+              type="text"
+              name="username"
+              placeholder="username"
+              onChange={this.handleChange}
+            />
+            <TextField
+              type="email"
+              name="email"
+              placeholder="Email"
+              onChange={this.handleChange}
+            />
+            <TextField
+              type="password"
+              name="password"
+              placeholder="Password"
+              onChange={this.handleChange}
+            />
+            <Button inline text="Submit" type="submit" disabled={loading} />
+          </form>
+        </Box>
+      </Container>
     );
   }
 }

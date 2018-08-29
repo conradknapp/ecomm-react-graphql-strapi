@@ -1,6 +1,8 @@
 import React from "react";
 import Strapi from "strapi-sdk-javascript/build/main";
-import { TextField, Button, Heading, Link, Toast, Box } from "gestalt";
+// prettier-ignore
+import { Container, Box, TextField, Text, Button, Heading, Link } from "gestalt";
+import ToastMessage from "../ToastMessage";
 import { setToken, setUserInfo } from "../../utils";
 const apiUrl = process.env.API_URL || "http://localhost:1337";
 const strapi = new Strapi(apiUrl);
@@ -10,8 +12,8 @@ class Signin extends React.Component {
     username: "",
     password: "",
     loading: false,
-    errorToast: false,
-    errorMessage: "",
+    toast: false,
+    toastMessage: "",
     googleProviderUrl: "http://localhost:1337/connect/google"
   };
 
@@ -37,10 +39,10 @@ class Signin extends React.Component {
     }
   };
 
-  showErrorToast = (errorMessage = "An error occurred") => {
-    this.setState({ errorToast: true, errorMessage });
+  showErrorToast = (toastMessage = "An error occurred") => {
+    this.setState({ toast: true, toastMessage });
     setTimeout(
-      () => this.setState({ errorToast: false, errorMessage: "" }),
+      () => this.setState({ toast: false, toastMessage: "" }),
       5000
     );
   };
@@ -55,7 +57,7 @@ class Signin extends React.Component {
     } catch (err) {
       console.error(err);
       this.setState({ loading: false });
-      this.showErrorToast(err.message);
+      this.showErrorToast("Please Sign In");
       this.redirectUser("/signin");
     }
   }
@@ -63,55 +65,65 @@ class Signin extends React.Component {
   redirectUser = path => this.props.history.push(path);
 
   render() {
-    const { loading, errorToast, errorMessage, googleProviderUrl } = this.state;
+    const { loading, toast, toastMessage, googleProviderUrl } = this.state;
 
     return (
-      <React.Fragment>
-        <form
-          style={{
-            display: "flex",
-            marginTop: "5em",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center"
-          }}
-          onSubmit={this.handleSubmit}
-        >
-          <Heading>Sign In</Heading>
-          <TextField
-            id="username"
-            type="text"
-            name="username"
-            placeholder="username"
-            onChange={this.handleChange}
-          />
-          <TextField
-            id="password"
-            type="password"
-            name="password"
-            placeholder="Password"
-            onChange={this.handleChange}
-          />
-          <Button inline text="Submit" type="submit" disabled={loading} />
-          <Link href={googleProviderUrl}>Sign in with Google</Link>
-          {errorToast && (
+      <Container>
+        <Box>
+          <form
+            style={{
+              display: "inlineBlock",
+              textAlign: "center"
+            }}
+            onSubmit={this.handleSubmit}
+          >
+            <Heading color="midnight">Sign In</Heading>
+            <TextField
+              id="username"
+              type="text"
+              name="username"
+              placeholder="username"
+              onChange={this.handleChange}
+            />
+            <TextField
+              id="password"
+              type="password"
+              name="password"
+              placeholder="Password"
+              onChange={this.handleChange}
+            />
+            <Button
+              color="blue"
+              inline
+              text="Submit"
+              type="submit"
+              disabled={loading}
+            />
+            <Text color="red">
+              {/* to give a Link color, wrap it in Text component and set color prop on it */}
+              <Link href={googleProviderUrl}>Sign in with Google</Link>
+            </Text>
+            {/* {errorToast && (
             <Box
-              fit
-              dangerouslySetInlineStyle={{
-                __style: {
-                  bottom: 250,
-                  left: "50%",
-                  transform: "translateX(-50%)"
-                }
-              }}
-              paddingX={1}
-              position="fixed"
+            color="gray"
+            fit
+            dangerouslySetInlineStyle={{
+              __style: {
+                bottom: 250,
+                left: "50%",
+                transform: "translateX(-50%)"
+              }
+            }}
+            paddingX={1}
+            position="fixed"
             >
-              <Toast color="orange" text={errorMessage} />
+            <Toast color="orange" text={errorMessage} />
             </Box>
-          )}
-        </form>
-      </React.Fragment>
+          )} */}
+            <ToastMessage show={toast} message={toastMessage} />
+          </form>
+        </Box>
+      </Container>
     );
   }
 }

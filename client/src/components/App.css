@@ -1,13 +1,21 @@
+body,
+html {
+  background-color: #f6f9fc;
+}
+
 a,
 a:link,
 a:visited {
   text-decoration: none;
 }
 
-body,
-html {
-  background-color: #f6f9fc;
+.active {
+  font-style: italic;
 }
+
+/* input {
+  margin-bottom: 0.3em;
+} */
 
 #stripe__button {
   white-space: nowrap;
@@ -38,18 +46,13 @@ html {
   box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
 }
 
-.active {
-  font-style: italic;
-  font-weight: bold;
-}
-
 .StripeElement {
   display: block;
   margin: 10px 0 20px 0;
   max-width: 500px;
   padding: 10px 14px;
   font-size: 1em;
-  font-family: "Source Code Pro", monospace;
+  font-family: monospace;
   box-shadow: rgba(50, 50, 93, 0.14902) 0px 1px 3px,
     rgba(0, 0, 0, 0.0196078) 0px 1px 0px;
   border: 0;
@@ -58,11 +61,11 @@ html {
   background: white;
 }
 
-#stripe__input::placeholder {
+/* #stripe__input::placeholder {
   color: #aab7c4;
 }
 
-#stripe__input:focus,
+#stripe__input:focus, */
 .StripeElement--focus {
   box-shadow: rgba(50, 50, 93, 0.109804) 0px 4px 6px,
     rgba(0, 0, 0, 0.0784314) 0px 1px 3px;

@@ -42,7 +42,7 @@ class Dishes extends React.Component {
 
   addToCart = dish => {
     const alreadyInCart = this.state.cartItems.findIndex(
-      el => el.id === dish.id
+      item => item._id === dish._id
     );
 
     if (alreadyInCart === -1) {
@@ -66,29 +66,48 @@ class Dishes extends React.Component {
       <Box display="flex" alignItems="center">
         <Box column={8} display="flex" direction="column">
           <Heading>Dishes</Heading>
-          {this.state.dishes.map(el => (
-            <Dish key={el._id} dish={el} addToCart={this.addToCart} />
+          {this.state.dishes.map(dish => (
+            <Dish key={dish._id} dish={dish} addToCart={this.addToCart} />
           ))}
         </Box>
         <Box margin={2} column={4}>
           <Mask shape="rounded" wash>
-            <Box padding={3}>
-              <Heading size="sm">Card</Heading>
-              <Text>{cartItems.length} items selected:</Text>
+            <Box
+              display="flex"
+              direction="column"
+              alignItems="center"
+              padding={3}
+            >
+              <Heading align="center" size="sm">
+                Your Cart
+              </Heading>
+              <Text color="gray" italic>
+                {cartItems.length} items selected
+              </Text>
               <ul>
-                {cartItems.map((el, i) => (
+                {cartItems.map((item, i) => (
                   <li key={i}>
                     <Text>
-                      {el.name} x {el.quantity} - ${el.quantity * el.price}
+                      {item.name} x {item.quantity} - $
+                      {item.quantity * item.price}
                     </Text>
                   </li>
                 ))}
               </ul>
-              <Text size="lg">Total: {displayPrice(cartItems)}</Text>
-              {cartItems.length === 0 && <p>Please select some items</p>}
-              <Text>
-                <Link to="/checkout">Checkout</Link>
-              </Text>
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                direction="column"
+              >
+                <Text size="lg">Total: {displayPrice(cartItems)}</Text>
+                {cartItems.length === 0 && (
+                  <Text>Please select some items</Text>
+                )}
+                <Text>
+                  <Link to="/checkout">Checkout</Link>
+                </Text>
+              </Box>
             </Box>
           </Mask>
         </Box>

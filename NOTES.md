@@ -49,6 +49,7 @@ Creating our MLab Database
 
 Adding GraphQL
 
+- Medium Post (https://medium.com/strapi/v3-alpha-12-graphql-rich-text-editor-redesigned-dashboard-25023dc4f090)
 - https://strapi.io/documentation/guides/graphql.html
 - Free plugin
 - Available with 'strapi install graphql'
@@ -65,6 +66,7 @@ Taking a Basic Look at GraphQL Queries
 App.js
 
 - After creating our Restaurant/Whatever Content, create an item of it and then go to App.js to fetch it and display it in the DOM using a GraphQL query
+- We show how to iterate over all of the indiviual restaurants within App.js, make the Restaurant data its own component (in Restaurant.js)
 
 Search Field
 
@@ -76,6 +78,10 @@ Creating SubProducts
 
 - Talk about the different kinds of relations that can be defined within Strapi -- many-to-many, one-to-many, one-to-one, one-way (https://strapi.io/documentation/concepts/concepts.html#relations)
 
+Creating the Cart Sidebar
+
+- At first, create the cart locally within the Dishes/whatever subproduct component and then later extract it as its own dedicated file (just need to pass down 'cartItems' down as props and as well as bring in the displayPrice utility function to the new component)
+
 Navbar
 
 - Create Navbar
@@ -86,6 +92,7 @@ Navbar
 
 Setting up Google Provider for Authentication
 
+- OAuth Client (https://console.developers.google.com/)
 - Guide: https://github.com/strapi/strapi-examples/blob/master/login-react/doc/google_setup.md
 - Basically, show how to use the Google + Api to add a JavaScript project, it will ask for your callback url (http://localhost:1337/connect/google/callback). You will provide a link with the callback part removed in Signin Page
 - Go to Admin, enable Google Provider and add all the necessary things (secret, key, url, callback url)
@@ -93,7 +100,26 @@ Setting up Google Provider for Authentication
 - In the 'Restrictions' part of your App in the Google + API (see screenshot in project folder), add two values:
 - Provide a 'Authorized JS origin' of 'http://localhost:3000'
 - Provide an 'Authorized redirect URI' of 'http://localhost:1337/connect/google/callback'
-- In the Admin panel,
+- In the Admin panel--
+
+Signin Form
+
+- Provide options both for JWT signin as well as Google Provider
+- For Google Provider add a link within local state to the Google Provider url. If you want to enable other providers, you just have to change the end of the path--'http://localhost:1337/connect/<provider>'
+- Add a link to the Google Provider underneath thte Signin to googleProviderUrl. They will provide their credentials and in the componentDidMount of Signin, we use (strapi.authenticateProvider('google;'), get the response value from the operation and grab the token and put it in localStorage as well as the user information, then we want to redirect the user to the home page, where the navbar should change its contents according to the getToken() conditional it has
+- We'll add a toast notification if there is an error in authentication...
+
+Toast
+
+- First create a toast component that is only for errors (within the Signin component) and when we need it to be available for the Checkout component, make its own file (ToastMessage.js) and change its API so that we can display either error or success messages and declaratively control whether it is shown or not
+- We'll create a new component called ToastMessage.js, bring in Text and Box, and give it errorToast and errorMessage props (The previous Toast component that was locally created in Signin.js is commented out)
+
+Stripe
+
+- We wil need to have users sign up with Stripe (go through that process)
+- There will be a couple of keys they will give us for testing (we will use a different set of keys for deployment)
+- Install the package 'react-stripe-elements'
+- Talk about the structure of the components that we will need for Stripe to work within our React components
 
 Loader
 
@@ -124,3 +150,8 @@ General Reference:
 - https://github.com/strapi/strapi-examples/issues/18
 - https://github.com/strapi/strapi-examples/tree/master/login-react
 - https://pinterest.github.io/gestalt
+
+Lecture Plan:
+
+- Overview of Gestalt, Gestalt API, How Most of Our Components will be structured with Gestalt
+- Overview of the Box API, quick demo on how to work with flexbox (before creating our first query within the App.sj component), show the guide that's available in the Gestalt documentation

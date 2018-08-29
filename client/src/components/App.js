@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./App.css";
-import { Container, Box, Heading, SearchField } from "gestalt";
+import { Container, Box, Heading, SearchField, Icon } from "gestalt";
 import Loader from "./Loader";
 import Restaurant from "./Restaurant";
 import Strapi from "strapi-sdk-javascript/build/main";
@@ -30,7 +30,7 @@ class App extends Component {
           `
       }
     });
-    console.log(response);
+    // console.log(response);
     this.setState({
       list: response.data.restaurants || [],
       loading: false
@@ -89,6 +89,14 @@ class App extends Component {
             placeholder="Search Restaurants"
             value={searchTerm}
           />
+          <Box margin={2}>
+            <Icon
+              icon="filter"
+              color={searchTerm ? "orange" : "gray"}
+              size={20}
+              accessibilityLabel="Filter"
+            />
+          </Box>
         </Box>
         <Box padding={2}>
           <Box

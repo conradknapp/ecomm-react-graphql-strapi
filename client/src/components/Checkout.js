@@ -5,6 +5,7 @@ import {
   CardElement,
   injectStripe
 } from "react-stripe-elements";
+import ToastMessage from "./ToastMessage";
 import { loadCart, displayPrice } from "../utils";
 import Strapi from "strapi-sdk-javascript/build/main";
 import { Heading, Box, TextField, Text } from "gestalt";
@@ -18,12 +19,14 @@ class _CheckoutForm extends React.Component {
     city: "",
     confirmationEmailAddress: "",
     loading: false,
-    cartItems: []
+    cartItems: [],
+    modal: false,
+    toast: false,
+    toastMessage: ""
   };
 
   componentDidMount() {
     this.setState({ cartItems: loadCart() });
-    console.dir(strapi);
   }
 
   handleChange = ({ event, value }) => {
@@ -31,10 +34,29 @@ class _CheckoutForm extends React.Component {
     this.setState({ [event.target.name]: value });
   };
 
-  handleSubmit = async event => {
+  isFormEmpty = ({ address, postalCode, city, confirmationEmailAddress }) => {
+    return !address || !postalCode || !city || !confirmationEmailAddress;
+  };
+
+  handleConfirmOrder = event => {
+    event.preventDefault();
+    if (this.isFormEmpty(this.state)) {
+      this.showToast("Fill in all fields");
+      return;
+    }
+    // this.setState({ modal: true });
+    this.handleSubmitOrder();
+  };
+
+  showToast = (toastMessage = "An error occurred") => {
+    this.setState({ toast: true, toastMessage });
+    setTimeout(() => this.setState({ toast: false, toastMessage: "" }), 5000);
+  };
+
+  handleSubmitOrder = async () => {
     const { address, postalCode, city, cardItems } = this.state;
 
-    event.preventDefault();
+    // event.preventDefault();
     this.setState({ loading: true });
     let token;
     try {
@@ -54,26 +76,41 @@ class _CheckoutForm extends React.Component {
         city,
         token
       });
-      await strapi.request("post", "/", {
-        to: "conrad.knapp@outlook.com",
-        from: "robot@strapi.io",
-        replyTo: "no-reply@strapi.io",
-        subject: "The Eatery - Order Confirmation",
-        text: "Your order was successfully sent!",
-        html: "Hello world!"
+      await strapi.request("POST", "/email", {
+        from: "contact@company.com", // Optional : sender (defaults to `strapi.config.smtp.from`).
+        to: ["john@doe.com"], // Recipients list.
+        html: "<p>Hello John</p>", // HTML version of the email content.
+        text: "Hello John" // Text version of the email content.
       });
-      alert("Your order has been successfully submitted.");
+
+      // await strapi.plugins["email"].services.email.send({
+      //   email: "admin@strapi.io",
+      //   from: "robbot@strapi.io",
+      //   replyTo: "no-reply@strapi.io",
+      //   subject: "Use strapi email provider successfully",
+      //   text: "Hello world!",
+      //   html: "Hello world!"
+      // });
+      // await strapi.request("post", "/", {
+      //   to: "conrad.knapp@outlook.com",
+      //   from: "robot@strapi.io",
+      //   replyTo: "no-reply@strapi.io",
+      //   subject: "The Eatery - Order Confirmation",
+      //   text: "Your order was successfully sent!",
+      //   html: "Hello world!"
+      // });
+      this.showToast("Your order has been successfully submitted.");
 
       // redirect to home page
     } catch (err) {
       this.setState({ loading: false });
       console.error(err.message);
-      alert("An error occurred.");
+      this.showToast(err.message);
     }
   };
 
   render() {
-    const { loading, cartItems } = this.state;
+    const { loading, cartItems, toast, toastMessage } = this.state;
 
     return (
       <Box
@@ -83,15 +120,24 @@ class _CheckoutForm extends React.Component {
         alignItems="center"
       >
         <Heading>Checkout</Heading>
+        <Text>{cartItems.length} items selected:</Text>
+        <ul>
+          {cartItems.map((item, i) => (
+            <li key={i}>
+              <Text>
+                {item.name} x {item.quantity} - ${item.quantity * item.price}
+              </Text>
+            </li>
+          ))}
+        </ul>
         <Text>Total: ${displayPrice(cartItems)}</Text>
-        <Box>
+        <Box maxWidth={450}>
           <form
             style={{
               display: "inlineBlock",
-              textAlign: "center",
-              maxWidth: 450
+              textAlign: "center"
             }}
-            onSubmit={this.handleSubmit}
+            onSubmit={this.handleConfirmOrder}
           >
             <TextField
               id="address"
@@ -125,6 +171,7 @@ class _CheckoutForm extends React.Component {
             <button id="stripe__button" type="submit" disabled={loading}>
               Submit
             </button>
+            <ToastMessage show={toast} message={toastMessage} />
           </form>
         </Box>
       </Box>
