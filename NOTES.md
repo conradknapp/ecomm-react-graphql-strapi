@@ -155,3 +155,8 @@ Lecture Plan:
 
 - Overview of Gestalt, Gestalt API, How Most of Our Components will be structured with Gestalt
 - Overview of the Box API, quick demo on how to work with flexbox (before creating our first query within the App.sj component), show the guide that's available in the Gestalt documentation
+
+Setting up Email Service
+
+- How to setup mailgun to send emails (https://github.com/strapi/strapi/issues/552)
+- Go to server/plugins/email/controllers/Email.js to modify settings
