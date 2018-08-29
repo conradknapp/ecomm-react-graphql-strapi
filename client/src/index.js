@@ -18,7 +18,7 @@ import Navbar from "./components/Navbar";
 
 import { getToken } from "./utils";
 
-const ProtectedRoute = ({ component: Component, ...rest }) => (
+const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route
     {...rest}
     render={props =>
@@ -46,8 +46,8 @@ class Root extends React.Component {
             <Route exact path="/" component={App} />
             <Route path="/signin" component={Signin} />
             <Route path="/signup" component={Signup} />
-            <Route path="/checkout" component={Checkout} />
-            <ProtectedRoute path="/cart" component={Cart} />
+            <PrivateRoute path="/checkout" component={Checkout} />
+            <PrivateRoute path="/cart" component={Cart} />
             <Route path="/:id" component={Dishes} />
           </Switch>
         </React.Fragment>

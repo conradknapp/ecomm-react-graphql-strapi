@@ -16,12 +16,14 @@ class _CheckoutForm extends React.Component {
     address: "",
     postalCode: "",
     city: "",
+    confirmationEmailAddress: "",
     loading: false,
     cartItems: []
   };
 
   componentDidMount() {
     this.setState({ cartItems: loadCart() });
+    console.dir(strapi);
   }
 
   handleChange = ({ event, value }) => {
@@ -45,17 +47,27 @@ class _CheckoutForm extends React.Component {
     }
     try {
       await strapi.createEntry("order", {
-        amount: "999",
+        amount: "9.99",
         dishes: cardItems,
         address,
         postalCode,
         city,
         token
       });
+      await strapi.request("post", "/", {
+        to: "conrad.knapp@outlook.com",
+        from: "robot@strapi.io",
+        replyTo: "no-reply@strapi.io",
+        subject: "The Eatery - Order Confirmation",
+        text: "Your order was successfully sent!",
+        html: "Hello world!"
+      });
       alert("Your order has been successfully submitted.");
+
       // redirect to home page
     } catch (err) {
       this.setState({ loading: false });
+      console.error(err.message);
       alert("An error occurred.");
     }
   };
@@ -64,17 +76,23 @@ class _CheckoutForm extends React.Component {
     const { loading, cartItems } = this.state;
 
     return (
-      <Box display="flex" justifyContent="center">
-        <form
-          style={{
-            display: "inlineBlock",
-            textAlign: "center"
-          }}
-          onSubmit={this.handleSubmit}
-        >
-          <Box>
-            <Heading>Checkout</Heading>
-            <Text>Total: ${displayPrice(cartItems)}</Text>
+      <Box
+        display="flex"
+        justifyContent="center"
+        direction="column"
+        alignItems="center"
+      >
+        <Heading>Checkout</Heading>
+        <Text>Total: ${displayPrice(cartItems)}</Text>
+        <Box>
+          <form
+            style={{
+              display: "inlineBlock",
+              textAlign: "center",
+              maxWidth: 450
+            }}
+            onSubmit={this.handleSubmit}
+          >
             <TextField
               id="address"
               type="text"
@@ -96,12 +114,19 @@ class _CheckoutForm extends React.Component {
               placeholder="Enter your city"
               onChange={this.handleChange}
             />
-            <CardElement id="stripe__input" onReady={el => el.focus()} />
+            <TextField
+              id="confirmationEmailAddress"
+              type="email"
+              name="confirmationEmailAddress"
+              placeholder="Email Address for Order Confirmation"
+              onChange={this.handleChange}
+            />
+            <CardElement id="stripe__input" onReady={input => input.focus()} />
             <button id="stripe__button" type="submit" disabled={loading}>
               Submit
             </button>
-          </Box>
-        </form>
+          </form>
+        </Box>
       </Box>
     );
   }

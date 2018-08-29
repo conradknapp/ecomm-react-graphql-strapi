@@ -39,6 +39,7 @@ class App extends Component {
 
   handleChange = ({ value }) => {
     this.setState({ searchTerm: value });
+    // this.setState({ searchTerm: value }, () => this.searchRestaurants());
   };
 
   filteredList = () => {
@@ -48,6 +49,25 @@ class App extends Component {
       return restaurant.name.toLowerCase().includes(searchTerm.toLowerCase());
     });
   };
+
+  // searchRestaurants = async () => {
+  //   const response = await strapi.request("post", "/graphql", {
+  //     data: {
+  //       query: `query  {
+  //         restaurants(where: {
+  //           name_contains: "${this.state.searchTerm}"
+  //         }) {
+  //           name
+  //         }
+  //       }`
+  //     }
+  //   });
+  //   console.log(this.state.searchTerm, response.data.restaurants);
+  // this.setState({
+  //   list: response.data.restaurants || [],
+  //   loading: false
+  // });
+  // };
 
   render() {
     const { searchTerm, loading } = this.state;
