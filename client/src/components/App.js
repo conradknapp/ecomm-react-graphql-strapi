@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import "./App.css";
-import { Link } from "react-router-dom";
-import { Box, Card, Heading, SearchField, Text, Spinner, Image } from "gestalt";
+import { Container, Box, Heading, SearchField } from "gestalt";
+import Loader from "./Loader";
+import Restaurant from "./Restaurant";
 import Strapi from "strapi-sdk-javascript/build/main";
 const apiUrl = process.env.API_URL || "http://localhost:1337";
 const strapi = new Strapi(apiUrl);
@@ -49,9 +50,10 @@ class App extends Component {
   };
 
   render() {
-    const { searchTerm } = this.state;
+    const { searchTerm, loading } = this.state;
+
     return (
-      <Box>
+      <Container>
         <Box
           color="white"
           shape="rounded"
@@ -80,57 +82,19 @@ class App extends Component {
             </Heading>
           </Box>
           <Box>
-            <Spinner
+            <Loader show={loading} />
+            {/* <Spinner
               show={this.state.loading}
               accessibilityLabel="Loading spinner"
-            />
-            {this.filteredList().map(el => (
-              <Restaurant key={el._id} restaurant={el} />
+            /> */}
+            {this.filteredList().map(restaurant => (
+              <Restaurant key={restaurant._id} restaurant={restaurant} />
             ))}
           </Box>
         </Box>
-      </Box>
+      </Container>
     );
   }
 }
-
-const Restaurant = ({ restaurant }) => (
-  <Box
-    display="flex"
-    alignItems="center"
-    justifyContent="center"
-    direction="column"
-    column={3}
-  >
-    <Card
-      image={
-        <Box
-          color="darkGray"
-          height={200}
-          width={200}
-          marginLeft={4}
-          marginRight={4}
-        >
-          <Image
-            alt="tall"
-            color="#000"
-            fit="cover"
-            naturalHeight={1}
-            naturalWidth={1}
-            src={`${apiUrl}${restaurant.image.url}`}
-          />
-        </Box>
-      }
-    >
-      <Text bold size="xl" align="center">
-        {restaurant.name}
-      </Text>
-      <Text align="center">{restaurant.description}</Text>
-      <Text bold size="xl" align="center" color="eggplant">
-        <Link to={`/${restaurant._id}`}>See Dishes</Link>
-      </Text>
-    </Card>
-  </Box>
-);
 
 export default App;

@@ -21,12 +21,12 @@ const AuthNav = () => (
     direction="row"
     display="flex"
   >
-    <NavLink to="/">
+    <NavLink exact activeClassName="active" to="/">
       <Text size="xl" color="white">
         Home
       </Text>
     </NavLink>
-    <NavLink to="/checkout">
+    <NavLink activeClassName="active" to="/checkout">
       <Text size="xl" color="white">
         Cart
       </Text>
@@ -45,17 +45,17 @@ const UnAuthNav = () => (
     direction="row"
     display="flex"
   >
-    <NavLink to="/">
+    <NavLink exact activeClassName="active" to="/">
       <Text size="xl" color="white">
         Home
       </Text>
     </NavLink>
-    <NavLink to="/signin">
+    <NavLink activeClassName="active" to="/signin">
       <Text size="xl" color="white">
         Sign in
       </Text>
     </NavLink>
-    <NavLink to="/signup">
+    <NavLink activeClassName="active" to="/signup">
       <Text size="xl" color="white">
         Sign up
       </Text>

@@ -76,8 +76,8 @@ class Dishes extends React.Component {
               <Heading size="sm">Card</Heading>
               <Text>{cartItems.length} items selected:</Text>
               <ul>
-                {cartItems.map(el => (
-                  <li>
+                {cartItems.map((el, i) => (
+                  <li key={i}>
                     <Text>
                       {el.name} x {el.quantity} - ${el.quantity * el.price}
                     </Text>

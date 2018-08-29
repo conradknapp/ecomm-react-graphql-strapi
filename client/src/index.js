@@ -7,7 +7,7 @@ import {
   Redirect
 } from "react-router-dom";
 import "./index.css";
-import 'gestalt/dist/gestalt.css';
+import "gestalt/dist/gestalt.css";
 import App from "./components/App";
 import Cart from "./components/Cart";
 import Checkout from "./components/Checkout";
@@ -40,7 +40,7 @@ class Root extends React.Component {
   render() {
     return (
       <Router>
-        <div>
+        <React.Fragment>
           <Navbar />
           <Switch>
             <Route exact path="/" component={App} />
@@ -50,7 +50,7 @@ class Root extends React.Component {
             <ProtectedRoute path="/cart" component={Cart} />
             <Route path="/:id" component={Dishes} />
           </Switch>
-        </div>
+        </React.Fragment>
       </Router>
     );
   }
