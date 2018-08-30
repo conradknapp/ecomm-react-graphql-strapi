@@ -130,6 +130,12 @@ Loader
 - Show how you can implement that same API as the Gestalt spinner (of show by passing it as a prop)
 - Note: Also talk about the color prop for each of the images (that you can show a default color when loading; set network to Fast 3G to display this neat feature / maybe create a random color function)
 
+Prep for Deployment
+
+- Remove console logs
+- Add Domain Authentication for SendGrid so you can use an email other than test@example.com
+- Add the official Stripe keys (not test keys)
+
 Deployment (Backend)
 
 - We need to add security settings before deployment!
@@ -150,6 +156,7 @@ General Reference:
 - https://github.com/strapi/strapi-examples/issues/18
 - https://github.com/strapi/strapi-examples/tree/master/login-react
 - https://pinterest.github.io/gestalt
+- https://snipcart.com/blog/node-js-react-strapi-tutorial
 
 Lecture Plan:
 
@@ -160,3 +167,9 @@ Setting up Email Service
 
 - How to setup mailgun to send emails (https://github.com/strapi/strapi/issues/552)
 - Go to server/plugins/email/controllers/Email.js to modify settings
+
+- npm install strapi-email-sendgrid@alpha (or strapi-email-mailgun)
+  = Install sendgrid plugin: npm install strapi-email-sendgrid
+- Go to sendgrid and sign up (no need to provide credit card), verify account for more than starter amount of 100 emails / day, choose Node.js
+- Walk through each of the steps: adding env (by pasting lines into terminal), no need to install @sendgrid/mail (the strapi-email-sendgrid package itself takes in the @sendgrid/mail package and configures our app according to the values we give it)
+- We can provide these values at /admin/plugins/email/configurations/development (the API key, default to and reply-to values)

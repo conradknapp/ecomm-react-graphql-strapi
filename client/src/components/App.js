@@ -15,7 +15,7 @@ class App extends Component {
   };
 
   async componentDidMount() {
-    const response = await strapi.request("post", "/graphql", {
+    const response = await strapi.request("POST", "/graphql", {
       data: {
         query: `query {
             restaurants {
@@ -89,7 +89,7 @@ class App extends Component {
             placeholder="Search Restaurants"
             value={searchTerm}
           />
-          <Box margin={2}>
+          <Box margin={3}>
             <Icon
               icon="filter"
               color={searchTerm ? "orange" : "gray"}

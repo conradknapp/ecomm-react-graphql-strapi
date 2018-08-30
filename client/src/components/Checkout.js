@@ -6,7 +6,8 @@ import {
   injectStripe
 } from "react-stripe-elements";
 import ToastMessage from "./ToastMessage";
-import { loadCart, displayPrice } from "../utils";
+import { loadCart, displayPrice, clearCart } from "../utils";
+import { withRouter } from "react-router-dom";
 import Strapi from "strapi-sdk-javascript/build/main";
 import { Heading, Box, TextField, Text } from "gestalt";
 const apiUrl = process.env.API_URL || "http://localhost:1337";
@@ -38,6 +39,10 @@ class _CheckoutForm extends React.Component {
     return !address || !postalCode || !city || !confirmationEmailAddress;
   };
 
+  getCurrentDate = () => {
+    return new Date(Date.now()).toLocaleDateString("us");
+  };
+
   handleConfirmOrder = event => {
     event.preventDefault();
     if (this.isFormEmpty(this.state)) {
@@ -48,13 +53,27 @@ class _CheckoutForm extends React.Component {
     this.handleSubmitOrder();
   };
 
-  showToast = (toastMessage = "An error occurred") => {
+  showToast = (toastMessage = "An error occurred", redirect = false) => {
     this.setState({ toast: true, toastMessage });
-    setTimeout(() => this.setState({ toast: false, toastMessage: "" }), 5000);
+    setTimeout(
+      () =>
+        this.setState(
+          { toast: false, toastMessage: "" },
+          () => redirect && this.props.history.push("/")
+        ),
+      5000
+    );
+    // setTimeout(() => redirect && this.props.history.push("/"), 0);
   };
 
   handleSubmitOrder = async () => {
-    const { address, postalCode, city, cardItems } = this.state;
+    const {
+      address,
+      postalCode,
+      city,
+      cardItems,
+      confirmationEmailAddress
+    } = this.state;
 
     // event.preventDefault();
     this.setState({ loading: true });
@@ -63,7 +82,7 @@ class _CheckoutForm extends React.Component {
       const response = await this.props.stripe.createToken();
       token = response.token.id;
     } catch (err) {
-      alert("An error occurred.");
+      this.showToast(err.message);
       this.setState({ loading: false });
       return;
     }
@@ -77,34 +96,19 @@ class _CheckoutForm extends React.Component {
         token
       });
       await strapi.request("POST", "/email", {
-        from: "contact@company.com", // Optional : sender (defaults to `strapi.config.smtp.from`).
-        to: ["john@doe.com"], // Recipients list.
-        html: "<p>Hello John</p>", // HTML version of the email content.
-        text: "Hello John" // Text version of the email content.
+        data: {
+          to: confirmationEmailAddress,
+          subject: `Order Confirmation - The Eatery, ${this.getCurrentDate()}`,
+          text: "Your order has been submitted!",
+          html: "Hello world!"
+        }
       });
 
-      // await strapi.plugins["email"].services.email.send({
-      //   email: "admin@strapi.io",
-      //   from: "robbot@strapi.io",
-      //   replyTo: "no-reply@strapi.io",
-      //   subject: "Use strapi email provider successfully",
-      //   text: "Hello world!",
-      //   html: "Hello world!"
-      // });
-      // await strapi.request("post", "/", {
-      //   to: "conrad.knapp@outlook.com",
-      //   from: "robot@strapi.io",
-      //   replyTo: "no-reply@strapi.io",
-      //   subject: "The Eatery - Order Confirmation",
-      //   text: "Your order was successfully sent!",
-      //   html: "Hello world!"
-      // });
-      this.showToast("Your order has been successfully submitted.");
-
-      // redirect to home page
+      this.showToast("Your order has been successfully submitted!", true);
+      clearCart();
     } catch (err) {
-      this.setState({ loading: false });
       console.error(err.message);
+      this.setState({ loading: false });
       this.showToast(err.message);
     }
   };
@@ -179,7 +183,7 @@ class _CheckoutForm extends React.Component {
   }
 }
 
-const CheckoutForm = injectStripe(_CheckoutForm);
+const CheckoutForm = withRouter(injectStripe(_CheckoutForm));
 
 class Checkout extends React.Component {
   render() {

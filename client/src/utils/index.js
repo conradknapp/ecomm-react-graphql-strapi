@@ -31,6 +31,12 @@ export const loadCart = () => {
   }
 };
 
+export const clearCart = () => {
+  if (localStorage.cart) {
+    localStorage.setItem("cart", "");
+  }
+};
+
 export const displayPrice = items => {
   return items.reduce(
     (accumulator, item) => accumulator + item.price * item.quantity,
