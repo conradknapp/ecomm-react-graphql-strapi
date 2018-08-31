@@ -1,7 +1,7 @@
 import React from "react";
 import Strapi from "strapi-sdk-javascript/build/main";
 // prettier-ignore
-import { Container, Box, TextField, Text, Button, Heading, Link } from "gestalt";
+import { Image, Container, Box, TextField, Text, Button, Heading, Link } from "gestalt";
 import ToastMessage from "../ToastMessage";
 import { setToken, setUserInfo } from "../../utils";
 const apiUrl = process.env.API_URL || "http://localhost:1337";
@@ -17,36 +17,6 @@ class Signin extends React.Component {
     googleProviderUrl: "http://localhost:1337/connect/google"
   };
 
-  handleChange = ({ event, value }) => {
-    event.persist();
-    this.setState({ [event.target.name]: value });
-  };
-
-  handleSubmit = async event => {
-    event.preventDefault();
-    const { username, password } = this.state;
-
-    try {
-      this.setState({ loading: true });
-      const response = await strapi.login(username, password);
-      this.setState({ loading: false });
-      console.log(response.user);
-      this.props.history.push("/");
-    } catch (err) {
-      this.setState({ loading: false });
-      this.showErrorToast(err.message);
-      // alert(err.message || "An error occurred.");
-    }
-  };
-
-  showErrorToast = (toastMessage = "An error occurred") => {
-    this.setState({ toast: true, toastMessage });
-    setTimeout(
-      () => this.setState({ toast: false, toastMessage: "" }),
-      5000
-    );
-  };
-
   async componentDidMount() {
     try {
       // window.location = strapi.getProviderAuthenticationUrl("google");
@@ -56,11 +26,45 @@ class Signin extends React.Component {
       this.redirectUser("/");
     } catch (err) {
       console.error(err);
-      this.setState({ loading: false });
-      this.showErrorToast("Please Sign In");
+      this.showToast("Please Sign In");
       this.redirectUser("/signin");
     }
   }
+
+  isFormEmpty = ({ username, email }) => {
+    return !username || !email;
+  };
+
+  handleChange = ({ event, value }) => {
+    event.persist();
+    this.setState({ [event.target.name]: value });
+  };
+
+  handleSubmit = async event => {
+    event.preventDefault();
+    const { username, password } = this.state;
+
+    if (this.isFormEmpty(this.state)) {
+      this.showToast("Fill in all fields");
+      return;
+    }
+
+    try {
+      this.setState({ loading: true });
+      const response = await strapi.login(username, password);
+      this.setState({ loading: false });
+      console.log(response.user);
+      this.redirectUser("/");
+    } catch (err) {
+      this.setState({ loading: false });
+      this.showToast(err.message);
+    }
+  };
+
+  showToast = toastMessage => {
+    this.setState({ toast: true, toastMessage });
+    setTimeout(() => this.setState({ toast: false, toastMessage: "" }), 5000);
+  };
 
   redirectUser = path => this.props.history.push(path);
 
@@ -69,20 +73,60 @@ class Signin extends React.Component {
 
     return (
       <Container>
-        <Box>
+        <Box
+          dangerouslySetInlineStyle={{
+            __style: {
+              backgroundColor: "#D6A3B1"
+            }
+          }}
+          shape="rounded"
+          padding={4}
+          margin={4}
+          display="flex"
+          justifyContent="center"
+        >
           <form
             style={{
               display: "inlineBlock",
-              textAlign: "center"
+              textAlign: "center",
+              maxWidth: 450
             }}
             onSubmit={this.handleSubmit}
           >
-            <Heading color="midnight">Sign In</Heading>
+            <Box>
+              <Heading color="midnight">Welcome Back!</Heading>
+            </Box>
+
+            {/* Google Sign In */}
+            <Box
+              shape="rounded"
+              margin={2}
+              justifyContent="center"
+              color="darkWash"
+              display="flex"
+              alignItems="center"
+            >
+              <Box margin={2} height={25} width={25}>
+                <Image
+                  alt="BrewHaha Logo"
+                  fit="contain"
+                  naturalHeight={1}
+                  naturalWidth={1}
+                  src="./icons/google.svg"
+                />
+              </Box>
+              <Text color="red">
+                {/* to give a Link color, wrap it in Text component and set color prop on it */}
+                <Link href={googleProviderUrl}>Sign in with Google</Link>
+              </Text>
+            </Box>
+
+            {/* Sign in Inputs */}
             <TextField
               id="username"
               type="text"
               name="username"
-              placeholder="username"
+              placeholder="Username"
               onChange={this.handleChange}
             />
             <TextField
@@ -99,27 +143,6 @@ class Signin extends React.Component {
               type="submit"
               disabled={loading}
             />
-            <Text color="red">
-              {/* to give a Link color, wrap it in Text component and set color prop on it */}
-              <Link href={googleProviderUrl}>Sign in with Google</Link>
-            </Text>
-            {/* {errorToast && (
-            <Box
-            color="gray"
-            fit
-            dangerouslySetInlineStyle={{
-              __style: {
-                bottom: 250,
-                left: "50%",
-                transform: "translateX(-50%)"
-              }
-            }}
-            paddingX={1}
-            position="fixed"
-            >
-            <Toast color="orange" text={errorMessage} />
-            </Box>
-          )} */}
             <ToastMessage show={toast} message={toastMessage} />
           </form>
         </Box>

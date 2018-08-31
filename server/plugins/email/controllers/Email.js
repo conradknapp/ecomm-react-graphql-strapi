@@ -38,6 +38,7 @@ module.exports = {
     let options = ctx.request.body;
 
     try {
+      console.log(options);
       // Send an email to the user.
       await strapi.plugins["email"].services.email.send({
         to: options.to,

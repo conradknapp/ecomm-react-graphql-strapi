@@ -1,18 +1,29 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
-import { Box, Text } from "gestalt";
+import { NavLink, withRouter } from "react-router-dom";
+import { Box, Text, Heading, Image, Button } from "gestalt";
 
-import { getToken } from "../utils";
+import { clearUserInfo, getToken, clearToken, clearCart } from "../utils";
 
 class Navbar extends React.Component {
+  handleSignout = () => {
+    clearUserInfo();
+    clearToken();
+    clearCart();
+    this.props.history.push("/");
+  };
+
   render() {
-    return getToken() !== null ? <AuthNav /> : <UnAuthNav />;
+    return getToken() !== null ? (
+      <AuthNav handleSignout={this.handleSignout} />
+    ) : (
+      <UnAuthNav />
+    );
   }
 }
 
-const AuthNav = () => (
+const AuthNav = ({ handleSignout }) => (
   <Box
-    height={60}
+    height={70}
     color="midnight"
     padding={1}
     alignItems="center"
@@ -21,22 +32,47 @@ const AuthNav = () => (
     direction="row"
     display="flex"
   >
-    <NavLink exact activeClassName="active" to="/">
-      <Text size="xl" color="white">
-        The Eatery
-      </Text>
-    </NavLink>
+    {/* Checkout Link */}
     <NavLink activeClassName="active" to="/checkout">
       <Text size="xl" color="white">
-        Cart
+        Checkout
       </Text>
     </NavLink>
+
+    {/* Logo and Title */}
+    <NavLink exact activeClassName="active" to="/">
+      <Box display="flex" alignItems="center">
+        <Box margin={2} height={50} width={50}>
+          <Image
+            alt="BrewHaha Logo"
+            fit="contain"
+            naturalHeight={1}
+            naturalWidth={1}
+            src="./icons/logo.svg"
+          />
+        </Box>
+        <div className="logo">
+          <Heading size="xs" color="orange">
+            BrewHaha
+          </Heading>
+        </div>
+      </Box>
+    </NavLink>
+
+    {/* Signout Button */}
+    <Button
+      color="transparent"
+      text="Sign Out"
+      inline
+      size="md"
+      onClick={handleSignout}
+    />
   </Box>
 );
 
 const UnAuthNav = () => (
   <Box
-    height={60}
+    height={70}
     color="midnight"
     padding={1}
     alignItems="center"
@@ -45,22 +81,40 @@ const UnAuthNav = () => (
     direction="row"
     display="flex"
   >
-    <NavLink exact activeClassName="active" to="/">
-      <Text size="xl" color="white">
-        The Eatery
-      </Text>
-    </NavLink>
+    {/* Signin Link */}
     <NavLink activeClassName="active" to="/signin">
       <Text size="xl" color="white">
-        Sign in
+        Sign In
       </Text>
     </NavLink>
+
+    {/* Logo and Title */}
+    <NavLink exact activeClassName="active" to="/">
+      <Box display="flex" alignItems="center">
+        <Box margin={2} height={50} width={50}>
+          <Image
+            alt="BrewHaha Logo"
+            fit="contain"
+            naturalHeight={1}
+            naturalWidth={1}
+            src="./icons/logo.svg"
+          />
+        </Box>
+        <div className="logo">
+          <Heading size="xs" color="orange">
+            BrewHaha
+          </Heading>
+        </div>
+      </Box>
+    </NavLink>
+
+    {/* Signup Link */}
     <NavLink activeClassName="active" to="/signup">
       <Text size="xl" color="white">
-        Sign up
+        Sign Up
       </Text>
     </NavLink>
   </Box>
 );
 
-export default Navbar;
+export default withRouter(Navbar);

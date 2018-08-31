@@ -1,45 +1,66 @@
-const USER_INFO = "userInfo";
-const TOKEN_KEY = "jwtToken";
+const USER_KEY = "userInfo";
+const CART_KEY = "cart";
+const TOKEN_KEY = "jwt";
 
-export const getToken = (key = TOKEN_KEY) => {
+/* Auth Token */
+export const getToken = (tokenKey = TOKEN_KEY) => {
   if (localStorage) {
-    return JSON.parse(localStorage.getItem(key));
-  } else {
-    return null;
+    return JSON.parse(localStorage.getItem(tokenKey)) || null;
   }
 };
 
-export const setToken = (value = "", tokenKey = TOKEN_KEY) => {
+export const setToken = (value, tokenKey = TOKEN_KEY) => {
   if (localStorage) {
     return localStorage.setItem(tokenKey, JSON.stringify(value));
   }
-  return null;
 };
 
-export const setUserInfo = (value = "", userInfo = USER_INFO) => {
+export const clearToken = (tokenKey = TOKEN_KEY) => {
   if (localStorage) {
-    return localStorage.setItem(userInfo, JSON.stringify(value));
-  }
-  return null;
-};
-
-export const loadCart = () => {
-  if (localStorage.cart) {
-    return JSON.parse(localStorage.getItem("cart"));
-  } else {
-    return [];
+    return localStorage.removeItem(tokenKey);
   }
 };
 
-export const clearCart = () => {
-  if (localStorage.cart) {
-    localStorage.setItem("cart", "");
+/* User Info */
+export const getUserInfo = (userKey = USER_KEY) => {
+  if (localStorage) {
+    return JSON.parse(localStorage.getItem(userKey)) || null;
+  }
+};
+
+export const setUserInfo = (value, userKey = USER_KEY) => {
+  if (localStorage) {
+    return localStorage.setItem(userKey, JSON.stringify(value));
+  }
+};
+
+export const clearUserInfo = (userKey = USER_KEY) => {
+  if (localStorage) {
+    return localStorage.removeItem(userKey);
+  }
+};
+
+/* Cart */
+export const getCart = (cartKey = CART_KEY) => {
+  if (localStorage) {
+    return JSON.parse(localStorage.getItem(cartKey)) || [];
+  }
+};
+
+export const setCart = (value, cartKey = CART_KEY) => {
+  if (localStorage) {
+    return localStorage.setItem(cartKey, JSON.stringify(value));
+  }
+};
+
+export const clearCart = (cartKey = CART_KEY) => {
+  if (localStorage) {
+    localStorage.removeItem(cartKey);
   }
 };
 
 export const displayPrice = items => {
-  return items.reduce(
-    (accumulator, item) => accumulator + item.price * item.quantity,
-    0
-  );
+  return `$${items
+    .reduce((acc, item) => acc + item.price * item.quantity, 0)
+    .toFixed(2)}`;
 };

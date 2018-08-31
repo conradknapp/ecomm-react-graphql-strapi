@@ -6,10 +6,11 @@ import {
   injectStripe
 } from "react-stripe-elements";
 import ToastMessage from "./ToastMessage";
-import { loadCart, displayPrice, clearCart } from "../utils";
 import { withRouter } from "react-router-dom";
+import { getCart, displayPrice, clearCart } from "../utils";
 import Strapi from "strapi-sdk-javascript/build/main";
-import { Heading, Box, TextField, Text } from "gestalt";
+// prettier-ignore
+import { Container, Heading, Box, TextField, Text, Modal, Button } from "gestalt";
 const apiUrl = process.env.API_URL || "http://localhost:1337";
 const strapi = new Strapi(apiUrl);
 
@@ -19,15 +20,15 @@ class _CheckoutForm extends React.Component {
     postalCode: "",
     city: "",
     confirmationEmailAddress: "",
-    loading: false,
+    orderProcessing: false,
     cartItems: [],
-    modal: false,
+    confirmationModal: false,
     toast: false,
     toastMessage: ""
   };
 
   componentDidMount() {
-    this.setState({ cartItems: loadCart() });
+    this.setState({ cartItems: getCart() });
   }
 
   handleChange = ({ event, value }) => {
@@ -49,9 +50,10 @@ class _CheckoutForm extends React.Component {
       this.showToast("Fill in all fields");
       return;
     }
-    // this.setState({ modal: true });
-    this.handleSubmitOrder();
+    this.setState({ confirmationModal: true });
   };
+
+  closeModal = () => this.setState({ confirmationModal: false });
 
   showToast = (toastMessage = "An error occurred", redirect = false) => {
     this.setState({ toast: true, toastMessage });
@@ -59,11 +61,11 @@ class _CheckoutForm extends React.Component {
       () =>
         this.setState(
           { toast: false, toastMessage: "" },
+          // redirect to home if second argument passed is true
           () => redirect && this.props.history.push("/")
         ),
       5000
     );
-    // setTimeout(() => redirect && this.props.history.push("/"), 0);
   };
 
   handleSubmitOrder = async () => {
@@ -75,18 +77,11 @@ class _CheckoutForm extends React.Component {
       confirmationEmailAddress
     } = this.state;
 
-    // event.preventDefault();
-    this.setState({ loading: true });
+    this.setState({ orderProcessing: true });
     let token;
     try {
       const response = await this.props.stripe.createToken();
       token = response.token.id;
-    } catch (err) {
-      this.showToast(err.message);
-      this.setState({ loading: false });
-      return;
-    }
-    try {
       await strapi.createEntry("order", {
         amount: "9.99",
         dishes: cardItems,
@@ -103,85 +98,186 @@ class _CheckoutForm extends React.Component {
           html: "Hello world!"
         }
       });
-
+      this.setState({ orderProcessing: false, confirmationModal: false });
       this.showToast("Your order has been successfully submitted!", true);
       clearCart();
     } catch (err) {
-      console.error(err.message);
-      this.setState({ loading: false });
+      this.setState({ orderProcessing: false, confirmationModal: false });
       this.showToast(err.message);
     }
   };
 
   render() {
-    const { loading, cartItems, toast, toastMessage } = this.state;
+    const {
+      orderProcessing,
+      cartItems,
+      toast,
+      toastMessage,
+      confirmationModal
+    } = this.state;
 
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        direction="column"
-        alignItems="center"
-      >
-        <Heading>Checkout</Heading>
-        <Text>{cartItems.length} items selected:</Text>
-        <ul>
-          {cartItems.map((item, i) => (
-            <li key={i}>
-              <Text>
-                {item.name} x {item.quantity} - ${item.quantity * item.price}
+      <Container>
+        <Box
+          display="flex"
+          justifyContent="center"
+          direction="column"
+          alignItems="center"
+          shape="rounded"
+          margin={8}
+          padding={4}
+          color="lightWash"
+        >
+          <Heading color="midnight">Checkout</Heading>
+
+          {/* User Cart */}
+          {cartItems.length > 0 ? (
+            <React.Fragment>
+              <Box
+                margin={2}
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                direction="column"
+              >
+                <Text italic>{cartItems.length} Items for Checkout</Text>
+                <ul>
+                  {cartItems.map((item, i) => (
+                    <li key={i}>
+                      <Text>
+                        {item.name} x {item.quantity} - $
+                        {item.quantity * item.price}
+                      </Text>
+                    </li>
+                  ))}
+                </ul>
+                <Text>Total: {displayPrice(cartItems)}</Text>
+              </Box>
+
+              {/* Checkout Form */}
+              <Box maxWidth={450}>
+                <form
+                  style={{
+                    display: "inlineBlock",
+                    textAlign: "center"
+                  }}
+                  onSubmit={this.handleConfirmOrder}
+                >
+                  <TextField
+                    id="address"
+                    type="text"
+                    name="address"
+                    placeholder="Address"
+                    onChange={this.handleChange}
+                  />
+                  <TextField
+                    id="postalCode"
+                    type="number"
+                    name="postalCode"
+                    placeholder="Postal Code"
+                    onChange={this.handleChange}
+                  />
+                  <TextField
+                    id="city"
+                    type="text"
+                    name="city"
+                    placeholder="Enter your city"
+                    onChange={this.handleChange}
+                  />
+                  <TextField
+                    id="confirmationEmailAddress"
+                    type="email"
+                    name="confirmationEmailAddress"
+                    placeholder="Email Address for Order Confirmation"
+                    onChange={this.handleChange}
+                  />
+                  <CardElement
+                    id="stripe__input"
+                    onReady={input => input.focus()}
+                  />
+                  <button
+                    id="stripe__button"
+                    type="submit"
+                    disabled={orderProcessing}
+                  >
+                    Submit
+                  </button>
+
+                  {/* Confirmation Modal */}
+                  {confirmationModal && (
+                    <ConfirmationModal
+                      orderProcessing={orderProcessing}
+                      handleSubmitOrder={this.handleSubmitOrder}
+                      closeModal={this.closeModal}
+                    />
+                  )}
+                  <ToastMessage show={toast} message={toastMessage} />
+                </form>
+              </Box>
+            </React.Fragment>
+          ) : (
+            // Default Text if No Items in Cart
+            <Box
+              color="darkGray"
+              shape="rounded"
+              paddingX={1}
+              paddingY={3}
+              margin={5}
+            >
+              <Heading align="center" color="watermelon" size="xs">
+                Your cart is empty
+              </Heading>
+              <Text align="center" italic color="green">
+                Add some brews!
               </Text>
-            </li>
-          ))}
-        </ul>
-        <Text>Total: ${displayPrice(cartItems)}</Text>
-        <Box maxWidth={450}>
-          <form
-            style={{
-              display: "inlineBlock",
-              textAlign: "center"
-            }}
-            onSubmit={this.handleConfirmOrder}
-          >
-            <TextField
-              id="address"
-              type="text"
-              name="address"
-              placeholder="Address"
-              onChange={this.handleChange}
-            />
-            <TextField
-              id="postalCode"
-              type="number"
-              name="postalCode"
-              placeholder="Postal Code"
-              onChange={this.handleChange}
-            />
-            <TextField
-              id="city"
-              type="text"
-              name="city"
-              placeholder="Enter your city"
-              onChange={this.handleChange}
-            />
-            <TextField
-              id="confirmationEmailAddress"
-              type="email"
-              name="confirmationEmailAddress"
-              placeholder="Email Address for Order Confirmation"
-              onChange={this.handleChange}
-            />
-            <CardElement id="stripe__input" onReady={input => input.focus()} />
-            <button id="stripe__button" type="submit" disabled={loading}>
-              Submit
-            </button>
-            <ToastMessage show={toast} message={toastMessage} />
-          </form>
+            </Box>
+          )}
         </Box>
-      </Box>
+      </Container>
     );
   }
 }
+
+const ConfirmationModal = ({
+  closeModal,
+  handleSubmitOrder,
+  orderProcessing
+}) => (
+  <Modal
+    accessibilityCloseLabel="close"
+    accessibilityModalLabel="Confirm Your Order"
+    heading="Confirm Your Order"
+    onDismiss={closeModal}
+    footer={
+      <Box display="flex" marginLeft={-1} marginRight={-1} justifyContent="end">
+        <Box padding={1}>
+          <Button
+            size="lg"
+            color="red"
+            text="Submit"
+            disabled={orderProcessing}
+            onClick={handleSubmitOrder}
+          />
+        </Box>
+        <Box padding={1}>
+          <Button
+            size="lg"
+            text="Cancel"
+            disabled={orderProcessing}
+            onClick={closeModal}
+          />
+        </Box>
+      </Box>
+    }
+    role="alertdialog"
+    size="sm"
+  >
+    <Box paddingX={4} paddingY={2}>
+      <Text>click Submit to Process Your Order</Text>
+      <Text italic>Check your email for receipt</Text>
+    </Box>
+  </Modal>
+);
 
 const CheckoutForm = withRouter(injectStripe(_CheckoutForm));
 

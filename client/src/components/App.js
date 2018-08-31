@@ -1,56 +1,66 @@
 import React, { Component } from "react";
 import "./App.css";
-import { Container, Box, Heading, SearchField, Icon } from "gestalt";
+import { Avatar, Container, Box, Heading, SearchField, Icon } from "gestalt";
 import Loader from "./Loader";
-import Restaurant from "./Restaurant";
+import Brand from "./Brand";
 import Strapi from "strapi-sdk-javascript/build/main";
+import { getUserInfo } from "../utils";
 const apiUrl = process.env.API_URL || "http://localhost:1337";
 const strapi = new Strapi(apiUrl);
 
 class App extends Component {
   state = {
-    list: [],
+    brands: [],
     searchTerm: "",
-    loading: true
+    loadingBrands: true,
+    userInfo: null
   };
 
   async componentDidMount() {
-    const response = await strapi.request("POST", "/graphql", {
-      data: {
-        query: `query {
-            restaurants {
-              _id
-              name
-              description
-              image {
-                url
+    try {
+      const response = await strapi.request("POST", "/graphql", {
+        data: {
+          query: `query {
+              restaurants {
+                _id
+                name
+                description
+                image {
+                  url
+                }
               }
             }
-          }
-          `
-      }
-    });
-    // console.log(response);
-    this.setState({
-      list: response.data.restaurants || [],
-      loading: false
-    });
+            `
+        }
+      });
+      // console.log(response);
+      this.setState({
+        brands: response.data.restaurants || [],
+        loadingBrands: false,
+        userInfo: getUserInfo()
+      });
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   handleChange = ({ value }) => {
     this.setState({ searchTerm: value });
-    // this.setState({ searchTerm: value }, () => this.searchRestaurants());
+    // this.setState({ searchTerm: value }, () => this.searchBrands());
   };
 
   filteredList = () => {
-    const { list, searchTerm } = this.state;
+    const { brands, searchTerm } = this.state;
 
-    return list.filter(restaurant => {
-      return restaurant.name.toLowerCase().includes(searchTerm.toLowerCase());
+    return brands.filter(brand => {
+      return (
+        brand.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        brand.description.toLowerCase().includes(searchTerm.toLowerCase())
+      );
     });
   };
 
-  // searchRestaurants = async () => {
+  // searchBrands = async () => {
   //   const response = await strapi.request("post", "/graphql", {
   //     data: {
   //       query: `query  {
@@ -64,29 +74,36 @@ class App extends Component {
   //   });
   //   console.log(this.state.searchTerm, response.data.restaurants);
   // this.setState({
-  //   list: response.data.restaurants || [],
-  //   loading: false
+  //   brands: response.data.restaurants || [],
+  //   loadingBrands: false
   // });
   // };
 
   render() {
-    const { searchTerm, loading } = this.state;
-
+    const { userInfo, searchTerm, loadingBrands } = this.state;
     return (
       <Container>
+        {/* Search Input */}
         <Box
-          color="white"
+          dangerouslySetInlineStyle={{
+            __style: {
+              backgroundColor: "#f6f9fc"
+            }
+          }}
           shape="rounded"
           padding={3}
           display="flex"
           direction="row"
           justifyContent="center"
         >
+          <Box marginRight={4}>
+            {userInfo && <Avatar name={userInfo.username} size="md" verified />}
+          </Box>
           <SearchField
-            accessibilityLabel="Restaurants Search Field"
+            accessibilityLabel="Brands Search Field"
             id="searchField"
             onChange={this.handleChange}
-            placeholder="Search Restaurants"
+            placeholder="Search Brands"
             value={searchTerm}
           />
           <Box margin={3}>
@@ -98,26 +115,41 @@ class App extends Component {
             />
           </Box>
         </Box>
-        <Box padding={2}>
+
+        {/* Brands Section */}
+        <Box>
           <Box
             display="flex"
             direction="row"
             justifyContent="center"
             marginBottom={1}
           >
+            {/* Brands Header */}
             <Heading color="midnight" size="md">
-              Restaurants
+              Brew Brands
             </Heading>
           </Box>
-          <Box>
-            <Loader show={loading} />
+
+          {/* Brands */}
+          <Box
+            dangerouslySetInlineStyle={{
+              __style: {
+                backgroundColor: "#d6c8ec"
+              }
+            }}
+            shape="rounded"
+            display="flex"
+            justifyContent="around"
+            wrap
+          >
+            {this.filteredList().map(brand => (
+              <Brand key={brand._id} brand={brand} />
+            ))}
             {/* <Spinner
-              show={this.state.loading}
+              show={this.state.loadingBrands}
               accessibilityLabel="Loading spinner"
             /> */}
-            {this.filteredList().map(restaurant => (
-              <Restaurant key={restaurant._id} restaurant={restaurant} />
-            ))}
+            <Loader show={loadingBrands} />
           </Box>
         </Box>
       </Container>

@@ -1,5 +1,6 @@
 body,
 html {
+  margin: 0;
   background-color: #f6f9fc;
 }
 
@@ -13,9 +14,9 @@ a:visited {
   font-style: italic;
 }
 
-/* input {
-  margin-bottom: 0.3em;
-} */
+form input {
+  margin-bottom: 0.5em;
+}
 
 #stripe__button {
   white-space: nowrap;
@@ -61,18 +62,14 @@ a:visited {
   background: white;
 }
 
-/* #stripe__input::placeholder {
-  color: #aab7c4;
-}
-
-#stripe__input:focus, */
 .StripeElement--focus {
   box-shadow: rgba(50, 50, 93, 0.109804) 0px 4px 6px,
     rgba(0, 0, 0, 0.0784314) 0px 1px 3px;
   transition: all 150ms ease;
 }
 
-.StripeElement.IdealBankElement,
-.StripeElement.PaymentRequestButton {
-  padding: 0;
+@media (max-width: 380px) {
+  .logo {
+    display: none;
+  }
 }

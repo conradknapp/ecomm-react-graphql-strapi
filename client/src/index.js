@@ -9,7 +9,7 @@ import {
 import "gestalt/dist/gestalt.css";
 import App from "./components/App";
 import Checkout from "./components/Checkout";
-import Dishes from "./components/Dishes";
+import Brews from "./components/Brews";
 import Signin from "./components/Auth/Signin";
 import Signup from "./components/Auth/Signup";
 import Navbar from "./components/Navbar";
@@ -43,7 +43,7 @@ const Root = () => (
         <Route path="/signin" component={Signin} />
         <Route path="/signup" component={Signup} />
         <PrivateRoute path="/checkout" component={Checkout} />
-        <Route path="/:id" component={Dishes} />
+        <Route path="/:id" component={Brews} />
       </Switch>
     </React.Fragment>
   </Router>
