@@ -151,7 +151,7 @@ class _CheckoutForm extends React.Component {
                     </li>
                   ))}
                 </ul>
-                <Text>Total: {displayPrice(cartItems)}</Text>
+                <Text>Total Amount: {displayPrice(cartItems)}</Text>
               </Box>
 
               {/* Checkout Form */}
@@ -167,7 +167,7 @@ class _CheckoutForm extends React.Component {
                     id="address"
                     type="text"
                     name="address"
-                    placeholder="Address"
+                    placeholder="Shipping Address"
                     onChange={this.handleChange}
                   />
                   <TextField
@@ -181,7 +181,7 @@ class _CheckoutForm extends React.Component {
                     id="city"
                     type="text"
                     name="city"
-                    placeholder="Enter your city"
+                    placeholder="City"
                     onChange={this.handleChange}
                   />
                   <TextField
@@ -217,13 +217,7 @@ class _CheckoutForm extends React.Component {
             </React.Fragment>
           ) : (
             // Default Text if No Items in Cart
-            <Box
-              color="darkGray"
-              shape="rounded"
-              paddingX={1}
-              paddingY={3}
-              margin={5}
-            >
+            <Box color="darkWash" shape="rounded" padding={4}>
               <Heading align="center" color="watermelon" size="xs">
                 Your cart is empty
               </Heading>

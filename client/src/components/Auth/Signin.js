@@ -20,14 +20,16 @@ class Signin extends React.Component {
   async componentDidMount() {
     try {
       // window.location = strapi.getProviderAuthenticationUrl("google");
+      this.setState({ loading: true });
       const response = await strapi.authenticateProvider("google");
+      this.setState({ loading: false });
       setToken(response.jwt);
       setUserInfo(response.user);
       this.redirectUser("/");
     } catch (err) {
       console.error(err);
+      this.setState({ loading: false });
       this.showToast("Please Sign In");
-      this.redirectUser("/signin");
     }
   }
 

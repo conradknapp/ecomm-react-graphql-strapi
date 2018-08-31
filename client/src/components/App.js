@@ -91,14 +91,16 @@ class App extends Component {
             }
           }}
           shape="rounded"
-          padding={3}
+          marginTop={4}
           display="flex"
           direction="row"
           justifyContent="center"
         >
+          {/* User Avatar */}
           <Box marginRight={4}>
             {userInfo && <Avatar name={userInfo.username} size="md" verified />}
           </Box>
+
           <SearchField
             accessibilityLabel="Brands Search Field"
             id="searchField"
@@ -106,7 +108,7 @@ class App extends Component {
             placeholder="Search Brands"
             value={searchTerm}
           />
-          <Box margin={3}>
+          <Box margin={2}>
             <Icon
               icon="filter"
               color={searchTerm ? "orange" : "gray"}
@@ -117,12 +119,12 @@ class App extends Component {
         </Box>
 
         {/* Brands Section */}
-        <Box>
+        <Box margin={4}>
           <Box
             display="flex"
             direction="row"
             justifyContent="center"
-            marginBottom={1}
+            marginBottom={2}
           >
             {/* Brands Header */}
             <Heading color="midnight" size="md">
